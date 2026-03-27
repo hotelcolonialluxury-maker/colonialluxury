@@ -61,6 +61,7 @@ def create_app():
     )
 
     app.config.from_object(Config)
+    app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 
