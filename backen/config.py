@@ -1,4 +1,4 @@
-﻿import os
+import os
 from dotenv import load_dotenv
 
 # Cargar variables del archivo .env
@@ -6,6 +6,10 @@ load_dotenv()
 
 # Directorio base del proyecto
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+db_url = os.getenv("DATABASE_URL")
+if db_url and db_url.startswith("mysql://"):
+    db_url = db_url.replace("mysql://", "mysql+pymysql://", 1)
 
 
 class Config:
@@ -17,10 +21,7 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
 
     # Base de datos
-    SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DATABASE_URL",
-        "sqlite:///" + os.path.join(BASE_DIR, "database.db")
-    )
+    SQLALCHEMY_DATABASE_URI = db_url or "sqlite:///" + os.path.join(BASE_DIR, "database.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Frontend

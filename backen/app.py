@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-load_dotenv()
+import pymysql
 from flask import redirect, url_for
 from flask import Flask, send_from_directory, render_template
 from flask_cors import CORS
@@ -8,6 +8,9 @@ from flask_migrate import Migrate
 from config import Config
 from models import db
 from werkzeug.security import generate_password_hash
+
+load_dotenv()
+pymysql.install_as_MySQLdb()
 
 # ================== MODELOS ==================
 from models.usuario import Usuario
@@ -48,9 +51,9 @@ def crear_admin_por_defecto():
         )
         db.session.add(nuevo_admin)
         db.session.commit()
-        print("✅ Admin creado")
+        print("Admin creado")
     else:
-        print("⚙️ Admin ya existe")
+        print("Admin ya existe")
 
 # ================== FACTORY ==================
 def create_app():
@@ -61,7 +64,6 @@ def create_app():
     )
 
     app.config.from_object(Config)
-    app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 
@@ -88,7 +90,7 @@ def create_app():
     @app.route("/login")
     def login():
         return render_template("login.html")
-    
+
     @app.route("/login.html")
     def login_html():
         return redirect(url_for("login"))
@@ -104,4 +106,7 @@ if __name__ == "__main__":
     app = create_app()
     with app.app_context():
         crear_admin_por_defecto()
-    app.run(host="0.0.0.0", port=5000, debug=True)
+
+    port = int(os.getenv("PORT", 5000))
+    debug_mode = os.getenv("FLASK_DEBUG", "false").lower() == "true"
+    app.run(host="0.0.0.0", port=port, debug=debug_mode)
