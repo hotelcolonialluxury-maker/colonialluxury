@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hotel Colonial Luxury</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<!-- Animate.css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#inicio">
+            <i class="bi bi-building"></i> Hotel Colonial Luxury
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="#inicio"><i class="bi bi-house-door"></i> Inicio</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#habitaciones" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-door-open"></i> Habitaciones
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#habitaciones">Habitación Simple</a></li>
+                        <li><a class="dropdown-item" href="#habitaciones">Habitación Doble</a></li>
+                        <li><a class="dropdown-item" href="#habitaciones">Suite Premium</a></li>
+                        
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#reservationModal">
+                        <i class="bi bi-calendar-check"></i> Reservas
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#pagos" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-credit-card"></i> Pagos
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#pagos">Tarjeta de Crédito</a></li>
+                        <li><a class="dropdown-item" href="#pagos">Transferencia Bancaria</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="#contacto">
+                <i class="bi bi-telephone"></i> Contacto
+                </a>
+                </li>
+                
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="#form-comentario">
+                <i class="bi bi-chat-text"></i> Comentarios
+                </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section id="inicio" class="hero text-center text-white">
+    <div class="hero-content">
+        <h1 class="animate__animated animate__fadeInDown"> Hotel Colonial Luxury Bienvenido </h1>
+        <p class="animate__animated animate__fadeInUp animate__delay-1s">Donde el lujo se encuentra con la elegancia</p>
+        <div class="animate__animated animate__fadeInUp animate__delay-2s">
+            <a href="#habitaciones" class="btn btn-gold btn-lg me-3"><i class="bi bi-eye"></i> Explorar Habitaciones</a>
+            <a href="#" class="btn btn-outline-light btn-lg" data-bs-toggle="modal" data-bs-target="#reservationModal"><i class="bi bi-calendar-plus"></i> Reservar Ahora</a>
+        </div>
+    </div>
+</section>
+
+<!-- =================== HABITACIONES =================== -->
+<section id="habitaciones" class="py-5 text-center">
+<div class="container">
+    <h2 class="section-title mb-5">Nuestras Habitaciones</h2>
+    <div id="contenedorHabitaciones" class="habitaciones-wrapper d-flex justify-content-center flex-wrap gap-4">
+        <!-- Las habitaciones se cargarán dinámicamente aquí -->
+        <div class="text-center w-100">
+            <div class="spinner-border text-warning" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="mt-2">Cargando habitaciones disponibles...</p>
+        </div>
+    </div>
+</div>
+</section>
+
+
+<!-- MÉTODOS DE PAGO -->
+<section id="pagos" class="payment-section py-5">
+    <div class="container">
+        <h2 class="section-title">Métodos de Pago Seguros</h2>
+        <p class="text-center mb-5">Procesamos tus pagos con la más alta seguridad</p>
+
+        <div class="row g-4 justify-content-center">
+
+            <!-- TARJETA -->
+            <div class="col-md-4">
+                <div class="payment-card text-center metodo-pago" data-metodo="tarjeta">
+                    <i class="bi bi-credit-card-2-front display-4"></i>
+                    <h4>Tarjetas de Crédito</h4>
+                    <p>Visa, MasterCard</p>
+                    <small class="text-muted">Procesamiento instantáneo</small>
+                </div>
+            </div>
+
+            <!-- TRANSFERENCIA -->
+            <div class="col-md-4">
+                <div class="payment-card text-center metodo-pago" data-metodo="transferencia">
+                    <i class="bi bi-bank2 display-4"></i>
+                    <h4>Transferencia Bancaria</h4>
+                    <p>Todos los bancos principales</p>
+                    <small class="text-muted">Confirmación en 24-48 horas</small>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- BOTÓN PAGAR -->
+        <div class="text-center mt-5">
+            <button id="btnPagar" class="btn btn-primary btn-lg" disabled>
+                Pagar ahora
+            </button>
+        </div>
+
+        <!-- INFO TRANSFERENCIA -->
+        <div id="datosTransferencia" class="mt-4"></div>
+
+    </div>
+</section>
+
+<!-- CONTACTO -->
+<section id="contacto" class="contact-section py-5 bg-dark text-white">
+    <div class="container">
+        <h2 class="section-title">Contáctanos</h2>
+        <div class="row g-5">
+            <div class="col-lg-8">
+                <form id="formContacto" class="contact-form">
+                    <h4 class="mb-4"><i class="bi bi-envelope"></i> Envíanos un Mensaje</h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre Completo</label>
+                            <input type="text" id="nombreIndex" class="form-control" placeholder="Tu nombre completo" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Correo Electrónico</label>
+                            <input type="email" id="emailIndex" class="form-control" placeholder="tu@email.com" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Teléfono</label>
+                            <input type="tel" id="telefonoIndex" class="form-control" placeholder="+57 300 123 4567">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Asunto</label>
+                            <select id="asuntoIndex" class="form-select">
+                                <option>Consulta General</option>
+                                <option>Reservación</option>
+                                <option>Eventos</option>
+                                <option>Quejas y Sugerencias</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Mensaje</label>
+                            <textarea id="mensajeIndex" class="form-control" rows="4" placeholder="Escribe tu mensaje aquí..." required></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-gold btn-lg w-100"><i class="bi bi-send"></i> Enviar Mensaje</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-4">
+                <h4 class="mb-4"><i class="bi bi-info-circle"></i> Información de Contacto</h4>
+                <p><i class="bi bi-geo-alt-fill"></i> Calle Principal, Pueblo Rico, Risaralda</p>
+                <p><i class="bi bi-telephone-fill"></i> +57 (6) 123-4567 | +57 300 123 4567</p>
+                <p><i class="bi bi-envelope-fill"></i> info@hotelcolonialluxury.com | reservas@hotelcolonialluxury.com</p>
+                <p><i class="bi bi-clock-fill"></i> Recepción: 24/7 | Check-in: 15:00 - Check-out: 11:00</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Formulario para dejar comentario -->
+<section id="form-comentario" class="py-5">
+<div class="container">
+    <div class="card p-4 shadow-sm">
+    <h3 class="mb-3">Deja tu comentario</h3>
+    <form id="comentarioForm">
+        <div class="mb-3">
+        <label class="form-label">Nombre</label>
+        <input type="text" id="nombre" class="form-control" placeholder="Tu nombre" required>
+        </div>
+
+        <div class="mb-3">
+        <label class="form-label">Correo Electrónico</label>
+        <input type="email" id="email" class="form-control" placeholder="tu@email.com" required>
+        </div>
+
+        <div class="mb-3">
+        <label class="form-label">Calificación</label>
+        <select id="rating" class="form-select" required>
+            <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
+            <option value="4">⭐⭐⭐⭐ Muy bueno</option>
+            <option value="3">⭐⭐⭐ Bueno</option>
+            <option value="2">⭐⭐ Regular</option>
+            <option value="1">⭐ Malo</option>
+        </select>
+        </div>
+
+        <div class="mb-3">
+        <label class="form-label">Comentario</label>
+        <textarea id="texto" class="form-control" rows="4" placeholder="Escribe tu comentario" required></textarea>
+        </div>
+
+        <button class="btn btn-gold" type="submit">
+        <i class="bi bi-send"></i> Enviar comentario
+        </button>
+    </form>
+    <p class="small text-muted mt-2">Tu comentario será revisado antes de ser aprobado.</p>
+    </div>
+</div>
+</section>
+
+
+<!-- Sección redes sociales -->
+<section id="redes" class="py-5 bg-dark text-center text-white">
+<div class="container">
+    <h2 class="mb-4">Síguenos en Redes Sociales</h2>
+    <a href="https://facebook.com" target="_blank" class="mx-3 fs-2 text-white">
+    <i class="bi bi-facebook"></i>
+    </a>
+    <a href="https://instagram.com" target="_blank" class="mx-3 fs-2 text-white">
+    <i class="bi bi-instagram"></i>
+    </a>
+</div>
+
+<!-- Sección de comentarios -->
+<section id="comentarios" class="py-5 bg-light">
+<div class="container">
+    <h2 class="text-center mb-5">Comentarios de Nuestros Clientes</h2>
+    <div id="listaComentarios" class="row g-3 justify-content-center">
+    <!-- Aquí se mostrarán los comentarios -->
+    </div>
+</div>
+</section>
+
+<!-- MODAL DE RESERVA -->
+<div class="modal fade" id="reservationModal" tabindex="-1">
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+    <form id="formReserva">
+        <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title"><i class="bi bi-calendar-heart"></i> Sistema de Reservas</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+        <div class="row g-3">
+            <!-- Selección de habitación -->
+            <div class="col-md-6">
+            <label class="form-label">Habitación</label>
+            <select class="form-select" name="habitacion_id" id="habitacionSelect" required>
+                <option value="">Cargando habitaciones...</option>
+            </select>
+            </div>
+
+            <!-- Número de huéspedes -->
+            <div class="col-md-6">
+            <label class="form-label">Número de Huéspedes</label>
+            <select class="form-select" name="huespedes" required>
+                <option>1 huésped</option>
+                <option>2 huéspedes</option>
+                <option>3 huéspedes</option>
+                <option>4 huéspedes</option>
+            </select>
+            </div>
+
+            <!-- Fechas -->
+            <div class="col-md-6">
+            <label class="form-label">Fecha de Entrada</label>
+            <input type="date" class="form-control" name="fecha_entrada" required>
+            </div>
+            <div class="col-md-6">
+            <label class="form-label">Fecha de Salida</label>
+            <input type="date" class="form-control" name="fecha_salida" required>
+            </div>
+
+            <!-- Datos del cliente -->
+            <div class="col-md-6">
+            <label class="form-label">Nombre Completo</label>
+            <input type="text" class="form-control" name="nombre" required>
+            </div>
+            <div class="col-md-6">
+            <label class="form-label">Correo Electrónico</label>
+            <input type="email" class="form-control" name="correo" required>
+            </div>
+            <div class="col-md-6">
+            <label class="form-label">Teléfono</label>
+            <input type="tel" class="form-control" name="telefono" required>
+            </div>
+            <div class="col-md-6">
+            <label class="form-label">Identificación</label>
+            <input type="text" class="form-control" name="identificacion" required>
+            </div>
+
+            <!-- Notas especiales -->
+            <div class="col-12">
+            <label class="form-label">Notas especiales (opcional)</label>
+            <textarea class="form-control" name="notas" rows="3" placeholder="Ej: Piso alto, cama extra, etc."></textarea>
+            </div>
+        </div>
+        </div>
+
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-warning"><i class="bi bi-credit-card"></i> Proceder al Pago</button>
+        </div>
+    </form>
+    </div>
+</div>
+</div>
+<!-- MODAL DE LOGIN -->
+<div class="modal fade" id="loginModal" tabindex="-1">
+<div class="modal-dialog">
+    <div class="modal-content">
+    <form id="formLogin">
+        <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title"><i class="bi bi-person-circle"></i> Iniciar Sesión</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+        <div class="mb-3">
+            <label class="form-label">Correo Electrónico</label>
+            <input type="email" class="form-control" name="email" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Contraseña</label>
+            <input type="password" class="form-control" name="password" required>
+        </div>
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-primary"><i class="bi bi-box-arrow-in-right"></i> Ingresar</button>
+        </div>
+    </form>
+    </div>
+</div>
+</div>
+
+<!-- MODAL REGISTRO -->
+<div class="modal fade" id="registroModal" tabindex="-1">
+<div class="modal-dialog">
+    <div class="modal-content bg-dark text-white">
+    <div class="modal-header">
+        <h5 class="modal-title">Crear Cuenta</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    </div>
+
+    <div class="modal-body">
+        <form id="formRegistro">
+        <input type="text" id="nombreRegistro" class="form-control mb-3" placeholder="Nombre" required>
+        <input type="email" id="emailRegistro" class="form-control mb-3" placeholder="Correo" required>
+        <input type="password" id="passwordRegistro" class="form-control mb-3" placeholder="Contraseña" required>
+
+        <button class="btn btn-success w-100" type="submit">Registrarse</button>
+        </form>
+    </div>
+    </div>
+</div>
+</div>
+
+<!-- WHATSAPP -->
+<a href="https://wa.me/573001234567?text=¡Hola! Me interesa hacer una reserva en Hotel Colonial Luxury" class="whatsapp-float" target="_blank" title="Contactar por WhatsApp">
+    <i class="bi bi-whatsapp"></i>
+</a>
+
+<!-- FOOTER -->
+<footer class="py-4 bg-light text-center">
+    <div class="container">
+        <h5><i class="bi bi-building"></i> Hotel Colonial Luxury</h5>
+        <p class="mb-0">Donde cada momento se convierte en un recuerdo inolvidable.</p>
+    </div>
+</footer>
+
+
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="{{ url_for('static', filename='js/config.js') }}"></script>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+</body>
+</html>
