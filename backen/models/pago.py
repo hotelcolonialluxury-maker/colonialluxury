@@ -11,7 +11,7 @@ class Pago(db.Model):
 
     metodo = Column(
         "metodo_pago",
-        Enum("tarjeta", "transferencia"),
+        Enum("tarjeta", "transferencia", name="metodo_pago_enum"),
         nullable=False
     )
 
