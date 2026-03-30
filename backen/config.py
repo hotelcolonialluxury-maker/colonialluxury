@@ -23,6 +23,10 @@ class Config:
     # Base de datos
     SQLALCHEMY_DATABASE_URI = db_url or "sqlite:///" + os.path.join(BASE_DIR, "database.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_pre_ping": True,
+        "pool_recycle": 300,
+    }
 
     # Frontend
     FRONTEND_URL = os.getenv("FRONTEND_URL", "http://127.0.0.1:5000")
@@ -39,3 +43,4 @@ class Config:
     SMTP_USER = os.getenv("SMTP_USER")
     SMTP_PASS = os.getenv("SMTP_PASS")
     EMAIL_FROM = os.getenv("EMAIL_FROM")
+

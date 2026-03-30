@@ -1,11 +1,11 @@
 import os
 from dotenv import load_dotenv
 import pymysql
-from flask import redirect, url_for
-from flask import Flask, send_from_directory, render_template
+from flask import Flask, jsonify, redirect, render_template, request, url_for
 from flask_cors import CORS
 from flask_migrate import Migrate
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from werkzeug.exceptions import HTTPException
 from config import Config
 from models import db
 from werkzeug.security import generate_password_hash
@@ -77,6 +77,26 @@ def inicializar_base_de_datos(app):
         crear_admin_por_defecto()
 
 
+def registrar_manejadores_error(app):
+    @app.errorhandler(SQLAlchemyError)
+    def manejar_error_sqlalchemy(exc):
+        db.session.rollback()
+        app.logger.exception("Error de base de datos en %s %s", request.method, request.path)
+        if request.path.startswith("/api/"):
+            return jsonify({"error": "Error de base de datos"}), 500
+        return "Error de base de datos", 500
+
+    @app.errorhandler(Exception)
+    def manejar_error_general(exc):
+        if isinstance(exc, HTTPException):
+            return exc
+
+        app.logger.exception("Error inesperado en %s %s", request.method, request.path)
+        if request.path.startswith("/api/"):
+            return jsonify({"error": "Error interno del servidor"}), 500
+        return "Error interno del servidor", 500
+
+
 # ================== FACTORY ==================
 def create_app(auto_init_db=None):
     app = Flask(
@@ -102,6 +122,8 @@ def create_app(auto_init_db=None):
     app.register_blueprint(admin_routes)
     app.register_blueprint(comentario_routes, url_prefix="/api")
     app.register_blueprint(contacto_routes, url_prefix="/api")
+
+    registrar_manejadores_error(app)
 
     # -------- INDEX REAL --------
     @app.route("/")
