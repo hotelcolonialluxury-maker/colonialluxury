@@ -1,10 +1,7 @@
-from app import create_app
-from models import db
-from app import crear_admin_por_defecto
+from app import create_app, inicializar_base_de_datos
 
-app = create_app()
+app = create_app(auto_init_db=False)
 
-with app.app_context():
-    db.create_all()
-    crear_admin_por_defecto()
-    print("✅ Tablas creadas y admin listo")
+if __name__ == "__main__":
+    inicializar_base_de_datos(app)
+    print("Tablas creadas y admin listo")

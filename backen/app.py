@@ -5,6 +5,7 @@ from flask import redirect, url_for
 from flask import Flask, send_from_directory, render_template
 from flask_cors import CORS
 from flask_migrate import Migrate
+from sqlalchemy.exc import IntegrityError
 from config import Config
 from models import db
 from werkzeug.security import generate_password_hash
@@ -34,15 +35,25 @@ from routes.public_routes import public_routes
 
 migrate = Migrate()
 
-# ================== ADMIN POR DEFECTO ==================
 
+def _env_true(value, default=False):
+    if value is None:
+        return default
+    return str(value).strip().lower() in {"1", "true", "yes", "on"}
+
+
+# ================== ADMIN POR DEFECTO ==================
 def crear_admin_por_defecto():
     admin_email = "admin@hotel.com"
     admin_nombre = "Administrador"
     admin_password = "admin123"
 
-    admin_existente = Usuario.query.filter_by(email=admin_email).first()
-    if not admin_existente:
+    try:
+        admin_existente = Usuario.query.filter_by(email=admin_email).first()
+        if admin_existente:
+            print("Admin ya existe")
+            return
+
         nuevo_admin = Usuario(
             nombre=admin_nombre,
             email=admin_email,
@@ -52,11 +63,22 @@ def crear_admin_por_defecto():
         db.session.add(nuevo_admin)
         db.session.commit()
         print("Admin creado")
-    else:
+    except IntegrityError:
+        db.session.rollback()
         print("Admin ya existe")
+    except Exception as exc:
+        db.session.rollback()
+        print(f"No se pudo crear el admin por defecto: {exc}")
+
+
+def inicializar_base_de_datos(app):
+    with app.app_context():
+        db.create_all()
+        crear_admin_por_defecto()
+
 
 # ================== FACTORY ==================
-def create_app():
+def create_app(auto_init_db=None):
     app = Flask(
         __name__,
         static_folder="static",
@@ -99,14 +121,24 @@ def create_app():
     def admin():
         return render_template("admin.html")
 
+    if auto_init_db is None:
+        # En Render se activa automaticamente; localmente se puede forzar con AUTO_INIT_DB=true
+        auto_init_db = _env_true(
+            os.getenv("AUTO_INIT_DB"),
+            default=_env_true(os.getenv("RENDER"), default=False) or __name__ == "__main__"
+        )
+
+    if auto_init_db:
+        inicializar_base_de_datos(app)
+
     return app
+
+
+# Objeto WSGI para gunicorn/render
+app = create_app()
 
 # ================== RUN ==================
 if __name__ == "__main__":
-    app = create_app()
-    with app.app_context():
-        crear_admin_por_defecto()
-
     port = int(os.getenv("PORT", 5000))
     debug_mode = os.getenv("FLASK_DEBUG", "false").lower() == "true"
     app.run(host="0.0.0.0", port=port, debug=debug_mode)
